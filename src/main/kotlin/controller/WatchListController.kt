@@ -1,12 +1,14 @@
 package org.releasetrackr.controller
 
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/api")
-class ArtistController {
+class WatchListController {
 
     /**
      * TODO:
@@ -15,8 +17,18 @@ class ArtistController {
      * - Remove artist from watchlist
      */
 
-    @GetMapping("/hello")
-    fun sayHello(): String {
+    @GetMapping("/watchlist")
+    fun list(): String {
+        return "Hello, Spring Boot with Kotlin!"
+    }
+
+    @PutMapping("/watchlist")
+    fun add(): String {
+        return "Hello, Spring Boot with Kotlin!"
+    }
+
+    @DeleteMapping("/watchlist")
+    fun delete(): String {
         return "Hello, Spring Boot with Kotlin!"
     }
 }
