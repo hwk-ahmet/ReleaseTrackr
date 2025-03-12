@@ -1,7 +1,7 @@
 package org.releasetrackr.domain.internal
 
 data class SearchResult(
-    val name: String,
-    val id: String,
-    val imageUrl: String
+    var name: String,
+    var id: String,
+    var imageUrl: String
 )

@@ -1,5 +1,7 @@
 package org.releasetrackr.controller
 
+import org.releasetrackr.domain.external.SpotifyGetArtistsResult
+import org.releasetrackr.service.WatchListService
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PutMapping
@@ -8,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/api")
-class WatchListController {
+class WatchListController(private val watchListService: WatchListService) {
 
     /**
      * TODO:
@@ -18,8 +20,8 @@ class WatchListController {
      */
 
     @GetMapping("/watchlist")
-    fun list(): String {
-        return "Hello, Spring Boot with Kotlin!"
+    fun list(): SpotifyGetArtistsResult? {
+        return watchListService.getWatchList()
     }
 
     @PutMapping("/watchlist")
