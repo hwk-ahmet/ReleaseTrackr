@@ -1,6 +1,6 @@
 package org.releasetrackr.controller
 
-import org.releasetrackr.domain.external.SpotifyGetArtistsResult
+import org.releasetrackr.domain.internal.ArtistsSearchResult
 import org.releasetrackr.service.WatchListService
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
@@ -20,7 +20,7 @@ class WatchListController(private val watchListService: WatchListService) {
      */
 
     @GetMapping("/watchlist")
-    fun list(): SpotifyGetArtistsResult? {
+    fun list(): ArtistsSearchResult? {
         return watchListService.getWatchList()
     }
 

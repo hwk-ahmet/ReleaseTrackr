@@ -1,6 +1,6 @@
 package org.releasetrackr.driver
 
-import mu.KLogging
+import org.releasetrackr.config.SpotifyConfiguration
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient

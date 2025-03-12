@@ -1,7 +1,8 @@
 package org.releasetrackr.driver
 
 import mu.KLogging
-import org.releasetrackr.domain.external.SpotifySearchResult
+import org.releasetrackr.domain.external.SpotifyArtist
+import org.releasetrackr.domain.internal.ArtistsSearchResult
 import org.springframework.core.ParameterizedTypeReference
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
@@ -11,27 +12,51 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 @Component
 class SpotifySearchArtistsDriver(private val spotifyGetAccessTokenDriver: SpotifyGetAccessTokenDriver) {
 
-    fun searchSpotify(query: String): SpotifySearchResult? {
+    fun searchSpotify(query: String): ArtistsSearchResult {
         val accessToken = spotifyGetAccessTokenDriver.getAccessToken()
 
         return try {
-            WebClient.builder().build().get()
+            val response = WebClient.builder().build().get()
                 .uri("https://api.spotify.com/v1/search?q=$query&type=artist&limit=10")
                 .headers { it.setBearerAuth(accessToken) }
                 .retrieve()
                 .bodyToMono(object : ParameterizedTypeReference<SpotifySearchResult>() {})
                 .block()
+
+            response?.toDto() ?: ArtistsSearchResult.empty() // Handle null safely
         } catch (e: WebClientResponseException) {
             logger.error("Spotify API responded with an error: ${e.statusCode} - ${e.responseBodyAsString}")
-            null
+            ArtistsSearchResult()
         } catch (e: WebClientRequestException) {
             logger.error("Request to Spotify API failed: ${e.message}")
-            null
+            ArtistsSearchResult()
         } catch (e: Exception) {
             logger.error("Unexpected error occurred: ${e.message}")
-            null
+            ArtistsSearchResult()
         }
     }
+
+    data class SpotifySearchResult(
+        var artists: ArtistList = ArtistList(emptyList())
+    ) {
+
+        data class ArtistList(
+            var items: List<SpotifyArtist>
+        )
+    }
+
+    fun SpotifySearchResult.toDto(): ArtistsSearchResult = ArtistsSearchResult(
+        artists = this.artists.items.map { artist ->
+            ArtistsSearchResult.Artist(
+                id = artist.id,
+                name = artist.name,
+                imageUrl = artist.images  // get second-smallest image if exists, get smallest otherwise
+                    .sortedBy { it.height * it.width }
+                    .let { sortedImages -> sortedImages.getOrNull(1) ?: sortedImages.firstOrNull() }
+                    ?.url.toString()
+            )
+        }
+    )
 
     private companion object : KLogging()
 }
