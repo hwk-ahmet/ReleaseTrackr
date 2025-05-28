@@ -1,5 +1,5 @@
 api:
   spotify:
-    clientId: "93e3609d71d44025891e74e7cf90e34b"
-    clientSecret: "966132ccef7b48ffb92f52ff9d05d802"
+    clientId: "4ed45f9e7d4e4438a53d14c9b7b4fe07"
+    clientSecret: "c6a56f97b73844f48380bc908c20d2e4"
     accessTokenUrl: "https://accounts.spotify.com/api/token"

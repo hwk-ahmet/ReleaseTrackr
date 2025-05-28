@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service
 @Service
 class WatchListService(private val spotifyGetArtistsByIdDriver: SpotifyGetArtistsByIdDriver) {
 
-    fun getWatchList(): ArtistsSearchResult? {
+    fun getStaticWatchList(): ArtistsSearchResult? {
         return try {
             val inputStream = object {}.javaClass.getResourceAsStream("/watchlist.txt")
             val ids = inputStream?.bufferedReader()?.readLines()
