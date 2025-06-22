@@ -10,14 +10,15 @@ import org.springframework.web.reactive.function.client.WebClientRequestExceptio
 import org.springframework.web.reactive.function.client.WebClientResponseException
 
 @Component
-class SpotifySearchArtistsDriver(spotifyGetAccessTokenDriver: SpotifyGetAccessTokenDriver) {
+class SpotifyGetFollowedArtistsDriver {
 
-    fun searchSpotify(query: String, accessToken: String): ArtistsSearchResult {
+    fun getFollowedArtists(authToken: String): ArtistsSearchResult {
 
         return try {
             val response = WebClient.builder().build().get()
-                .uri("https://api.spotify.com/v1/search?q=$query&type=artist&limit=10")
-                .headers { it.setBearerAuth(accessToken) }
+
+                .uri("https://api.spotify.com/v1/me/following?type=artist&limit=50")
+                .headers { it.setBearerAuth(authToken) }
                 .retrieve()
                 .bodyToMono(object : ParameterizedTypeReference<SpotifySearchResult>() {})
                 .block()

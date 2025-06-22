@@ -15,7 +15,4 @@ class SpotifyConfiguration {
     @NotBlank
     lateinit var clientSecret: String
 
-    @NotBlank
-    lateinit var accessTokenUrl: String
-
 }

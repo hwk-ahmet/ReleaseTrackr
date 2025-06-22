@@ -6,7 +6,8 @@ import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
 
 @Component
-class SpotifyGetAccessTokenDriver(private val spotifyConfiguration: SpotifyConfiguration) {
+@Deprecated("USE SpotifyUserAuthorizationDriver instead")
+class SpotifyGetAccessTokenDriver(spotifyConfiguration: SpotifyConfiguration) {
 
     private val webClient = WebClient.builder().build()
 
@@ -29,12 +30,10 @@ class SpotifyGetAccessTokenDriver(private val spotifyConfiguration: SpotifyConfi
         private lateinit var clientId: String
         private lateinit var clientSecret: String
         private lateinit var tokenUrl: String
-        private lateinit var apiUrl: String
 
         fun initialize(spotifyConfiguration: SpotifyConfiguration) {
             clientId = spotifyConfiguration.clientId
             clientSecret = spotifyConfiguration.clientSecret
-            tokenUrl = spotifyConfiguration.accessTokenUrl
         }
     }
 
