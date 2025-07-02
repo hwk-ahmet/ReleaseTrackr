@@ -3,7 +3,7 @@ package org.releasetrackr.controller
 import jakarta.servlet.http.HttpServletResponse
 import mu.KLogging
 import org.releasetrackr.config.SpotifyConfiguration
-import org.releasetrackr.domain.internal.ArtistsSearchResult
+import org.releasetrackr.domain.internal.WatchList
 import org.releasetrackr.service.SpotifyAuthHandlerService
 import org.releasetrackr.service.WatchListService
 import org.springframework.web.bind.annotation.GetMapping
@@ -36,7 +36,7 @@ class AuthController(
     }
 
     @GetMapping("/callback")
-    fun callback(@RequestParam("code") code: String): ArtistsSearchResult {
+    fun callback(@RequestParam("code") code: String): WatchList {
         val accessToken = spotifyAuthHandlerService.exchangeAccessCode(code)
         // return spotifySearchService.searchArtists("pryor")
         return watchListService.getWatchList(accessToken) ?: throw RuntimeException("Could not generate watchlist")
