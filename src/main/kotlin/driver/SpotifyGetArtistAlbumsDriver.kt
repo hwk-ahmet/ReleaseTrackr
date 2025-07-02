@@ -22,8 +22,7 @@ class SpotifyGetArtistAlbumsDriver {
                 try {
                     val uri = UriComponentsBuilder
                         .fromHttpUrl("https://api.spotify.com/v1/artists/$artistId/albums")
-                        .queryParam("include_groups", "album") // optional: only full albums, no singles
-                        .queryParam("market", "DE") // set your market if needed
+                        .queryParam("market", "DE")
                         .queryParam("limit", 50)
                         .build()
                         .toUri()

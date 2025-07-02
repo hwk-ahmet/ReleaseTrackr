@@ -1,7 +1,9 @@
 package org.releasetrackr.domain.internal
 
+import org.releasetrackr.domain.external.SpotifyAlbum
+
 data class WatchList(
-    var albums: List<Album> = emptyList()
+    var albums: List<SpotifyAlbum> = emptyList()
 ) {
 
     data class Album(

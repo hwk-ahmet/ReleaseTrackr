@@ -1,10 +1,11 @@
 package org.releasetrackr.service
 
-import kotlinx.coroutines.runBlocking
 import org.releasetrackr.domain.internal.WatchList
 import org.releasetrackr.driver.SpotifyGetArtistAlbumsDriver
 import org.releasetrackr.driver.SpotifyGetFollowedArtistsDriver
 import org.springframework.stereotype.Service
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 @Service
 class WatchListService(
@@ -12,24 +13,29 @@ class WatchListService(
     private val spotifyGetArtistAlbumsDriver: SpotifyGetArtistAlbumsDriver
 ) {
 
-    fun getWatchList(authCode: String): WatchList = runBlocking {
+    suspend fun getWatchList(authCode: String): WatchList {
         val followedArtists = spotifyGetFollowedArtistsDriver.getAllFollowedArtists(authCode)
-        val artistIds = followedArtists.artists.map { it.id }
+        val albums = spotifyGetArtistAlbumsDriver.getAlbumsForArtists(authCode, followedArtists.artists.map { it.id })
 
-        val allAlbums = spotifyGetArtistAlbumsDriver.getAlbumsForArtists(authCode, artistIds)
-
-        val albums = allAlbums.map {
-            WatchList.Album(
-                releaseDate = it.release_date,
-                albumName = it.name,
-                artistName = it.artists.firstOrNull()?.name.orEmpty(),
-                imageUrl = it.images
-                    .sortedBy { img -> img.height * img.width }
-                    .firstOrNull()?.url.orEmpty(),
-                albumUrl = it.external_urls?.get("spotify").orEmpty()
-            )
+        val sortedAlbums = albums.sortedByDescending { album ->
+            parseReleaseDate(album.release_date)
         }
 
-        WatchList(albums = albums)
+        return WatchList(sortedAlbums)
+    }
+
+    private fun parseReleaseDate(releaseDate: String): LocalDate {
+        return when {
+            releaseDate.matches(Regex("""\d{4}-\d{2}-\d{2}""")) -> // YYYY-MM-DD
+                LocalDate.parse(releaseDate, DateTimeFormatter.ISO_LOCAL_DATE)
+
+            releaseDate.matches(Regex("""\d{4}-\d{2}""")) -> // YYYY-MM
+                LocalDate.parse("$releaseDate-01", DateTimeFormatter.ISO_LOCAL_DATE)
+
+            releaseDate.matches(Regex("""\d{4}""")) -> // YYYY
+                LocalDate.parse("$releaseDate-01-01", DateTimeFormatter.ISO_LOCAL_DATE)
+
+            else -> LocalDate.MIN
+        }
     }
 }

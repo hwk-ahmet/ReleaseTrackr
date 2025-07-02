@@ -36,7 +36,7 @@ class AuthController(
     }
 
     @GetMapping("/callback")
-    fun callback(@RequestParam("code") code: String): WatchList {
+    suspend fun callback(@RequestParam("code") code: String): WatchList {
         val accessToken = spotifyAuthHandlerService.exchangeAccessCode(code)
         // return spotifySearchService.searchArtists("pryor")
         return watchListService.getWatchList(accessToken) ?: throw RuntimeException("Could not generate watchlist")
