@@ -5,7 +5,6 @@ import mu.KLogging
 import org.releasetrackr.config.SpotifyConfiguration
 import org.releasetrackr.domain.internal.ArtistsSearchResult
 import org.releasetrackr.service.SpotifyAuthHandlerService
-import org.releasetrackr.service.SpotifySearchService
 import org.releasetrackr.service.WatchListService
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
@@ -20,8 +19,7 @@ import java.util.*
 class AuthController(
     private val spotifyConfiguration: SpotifyConfiguration,
     private val watchListService: WatchListService,
-    private val spotifyAuthHandlerService: SpotifyAuthHandlerService,
-    private val spotifySearchService: SpotifySearchService
+    private val spotifyAuthHandlerService: SpotifyAuthHandlerService
 ) {
 
     @GetMapping("/login")
