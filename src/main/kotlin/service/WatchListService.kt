@@ -15,7 +15,7 @@ class WatchListService(
 
     suspend fun getWatchList(authCode: String): WatchList {
         val followedArtists = spotifyGetFollowedArtistsDriver.getAllFollowedArtists(authCode)
-        val albums = spotifyGetArtistAlbumsDriver.getAlbumsForArtists(authCode, followedArtists.artists.map { it.id })
+        val albums = spotifyGetArtistAlbumsDriver.getAlbumsForArtists(authCode, followedArtists.map { it.id })
 
         val sortedAlbums = albums.sortedByDescending { album ->
             parseReleaseDate(album.release_date)

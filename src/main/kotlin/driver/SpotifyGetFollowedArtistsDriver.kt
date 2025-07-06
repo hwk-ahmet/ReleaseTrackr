@@ -1,8 +1,7 @@
 package org.releasetrackr.driver
 
 import mu.KLogging
-import org.releasetrackr.domain.external.SpotifyArtist
-import org.releasetrackr.domain.internal.ArtistsSearchResult
+import org.releasetrackr.domain.internal.Artist
 import org.springframework.core.ParameterizedTypeReference
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
@@ -13,14 +12,14 @@ import org.springframework.web.util.UriComponentsBuilder
 @Component
 class SpotifyGetFollowedArtistsDriver {
 
-    fun getAllFollowedArtists(authToken: String): ArtistsSearchResult {
-        val allArtists = mutableListOf<ArtistsSearchResult.Artist>()
+    fun getAllFollowedArtists(authToken: String): List<Artist> {
+        var allArtists: MutableList<Artist>
         var after: String? = null
 
         do {
             val spotifyResult = fetchFollowedArtists(authToken, after)
-            allArtists += spotifyResult.artists.items.map { artist ->
-                ArtistsSearchResult.Artist(
+            allArtists = spotifyResult.artists.items.map { artist ->
+                Artist(
                     id = artist.id,
                     name = artist.name,
                     imageUrl = artist.images
@@ -28,14 +27,14 @@ class SpotifyGetFollowedArtistsDriver {
                         .let { sortedImages -> sortedImages.getOrNull(1) ?: sortedImages.firstOrNull() }
                         ?.url.orEmpty()
                 )
-            }
+            }.toMutableList()
             after = spotifyResult.artists.cursors.after
         } while (!after.isNullOrBlank())
 
-        return ArtistsSearchResult(artists = allArtists)
+        return allArtists
     }
 
-    private fun fetchFollowedArtists(authToken: String, after: String?): SpotifySearchResult {
+    private fun fetchFollowedArtists(authToken: String, after: String?): SpotifyFollowedArtistsResult {
         return try {
             val uri = UriComponentsBuilder
                 .fromHttpUrl("https://api.spotify.com/v1/me/following")
@@ -53,25 +52,25 @@ class SpotifyGetFollowedArtistsDriver {
                 .uri(uri)
                 .headers { it.setBearerAuth(authToken) }
                 .retrieve()
-                .bodyToMono(object : ParameterizedTypeReference<SpotifySearchResult>() {})
+                .bodyToMono(object : ParameterizedTypeReference<SpotifyFollowedArtistsResult>() {})
                 .block()
-                ?: SpotifySearchResult.empty()
+                ?: SpotifyFollowedArtistsResult.empty()
         } catch (e: WebClientResponseException) {
             logger.error("Spotify API responded with an error: ${e.statusCode} - ${e.responseBodyAsString}")
-            SpotifySearchResult.empty()
+            SpotifyFollowedArtistsResult.empty()
         } catch (e: WebClientRequestException) {
             logger.error("Request to Spotify API failed: ${e.message}")
-            SpotifySearchResult.empty()
+            SpotifyFollowedArtistsResult.empty()
         } catch (e: Exception) {
             logger.error("Unexpected error occurred: ${e.message}")
-            SpotifySearchResult.empty()
+            SpotifyFollowedArtistsResult.empty()
         }
     }
 
-    data class SpotifySearchResult(
-        val artists: ArtistList
+    data class SpotifyFollowedArtistsResult(
+        val artists: SpotifyArtistList
     ) {
-        data class ArtistList(
+        data class SpotifyArtistList(
             val items: List<SpotifyArtist>,
             val cursors: Cursor
         )
@@ -80,15 +79,30 @@ class SpotifyGetFollowedArtistsDriver {
             val after: String?
         )
 
+        data class SpotifyArtist(
+            var id: String,
+            var name: String,
+            var images: List<SpotifyImage> = emptyList()
+        ) {
+
+            data class SpotifyImage(
+                var url: String,
+                var height: Int,
+                var width: Int
+            )
+
+        }
+
         companion object {
-            fun empty() = SpotifySearchResult(
-                artists = ArtistList(
+            fun empty() = SpotifyFollowedArtistsResult(
+                artists = SpotifyArtistList(
                     items = emptyList(),
                     cursors = Cursor(null)
                 )
             )
         }
     }
+
 
     private companion object : KLogging()
 }
