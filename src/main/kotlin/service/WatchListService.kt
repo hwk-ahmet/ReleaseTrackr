@@ -1,6 +1,6 @@
 package org.releasetrackr.service
 
-import org.releasetrackr.domain.internal.WatchList
+import org.releasetrackr.domain.internal.Album
 import org.releasetrackr.driver.SpotifyGetArtistAlbumsDriver
 import org.releasetrackr.driver.SpotifyGetFollowedArtistsDriver
 import org.springframework.stereotype.Service
@@ -13,15 +13,15 @@ class WatchListService(
     private val spotifyGetArtistAlbumsDriver: SpotifyGetArtistAlbumsDriver
 ) {
 
-    suspend fun getWatchList(authCode: String): WatchList {
+    suspend fun getWatchList(authCode: String): List<Album> {
         val followedArtists = spotifyGetFollowedArtistsDriver.getAllFollowedArtists(authCode)
         val albums = spotifyGetArtistAlbumsDriver.getAlbumsForArtists(authCode, followedArtists.map { it.id })
 
         val sortedAlbums = albums.sortedByDescending { album ->
-            parseReleaseDate(album.release_date)
+            parseReleaseDate(album.releaseDate)
         }
 
-        return WatchList(sortedAlbums)
+        return sortedAlbums
     }
 
     private fun parseReleaseDate(releaseDate: String): LocalDate {
