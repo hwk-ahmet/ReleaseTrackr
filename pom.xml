@@ -11,7 +11,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <kotlin.code.style>official</kotlin.code.style>
-        <kotlin.compiler.jvmTarget>17</kotlin.compiler.jvmTarget>  <!-- ✅ Updated -->
+        <kotlin.compiler.jvmTarget>21</kotlin.compiler.jvmTarget>  <!-- ✅ Updated -->
     </properties>
 
     <parent>
@@ -33,11 +33,21 @@
         <testSourceDirectory>src/test/kotlin</testSourceDirectory>
         <plugins>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.11.0</version> <!-- Use latest -->
+                <configuration>
+                    <source>21</source>
+                    <target>21</target>
+                    <release>21</release> <!-- optional but good for consistency -->
+                </configuration>
+            </plugin>
+            <plugin>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-maven-plugin</artifactId>
                 <version>2.1.10</version>
                 <configuration>
-                    <jvmTarget>17</jvmTarget>  <!-- ✅ Ensure correct JVM target -->
+                    <jvmTarget>21</jvmTarget>  <!-- ✅ Ensure correct JVM target -->
                     <compilerPlugins>
                         <plugin>spring</plugin>
                     </compilerPlugins>
@@ -61,7 +71,12 @@
             </plugin>
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.22.2</version>
+                <version>3.2.5</version> <!-- ✅ Use latest version -->
+                <configuration>
+                    <includes>
+                        <include>**/*Test.kt</include>
+                    </includes>
+                </configuration>
             </plugin>
             <plugin>
                 <artifactId>maven-failsafe-plugin</artifactId>
@@ -102,6 +117,13 @@
             <groupId>org.jetbrains.kotlinx</groupId>
             <artifactId>kotlinx-coroutines-reactor</artifactId>
             <version>1.7.3</version> <!-- or latest stable version -->
+        </dependency>
+
+        <dependency>
+            <groupId>com.tngtech.archunit</groupId>
+            <artifactId>archunit</artifactId>
+            <version>1.2.1</version>
+            <scope>test</scope>
         </dependency>
 
         <dependency>
