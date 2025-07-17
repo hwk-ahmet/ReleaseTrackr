@@ -1,5 +1,8 @@
 package org.releasetrackr.service
 
+import WatchListFlow
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import org.releasetrackr.domain.internal.Album
 import org.releasetrackr.driver.SpotifyGetArtistAlbumsDriver
 import org.releasetrackr.driver.SpotifyGetFollowedArtistsDriver
@@ -12,6 +15,22 @@ class WatchListService(
     private val spotifyGetFollowedArtistsDriver: SpotifyGetFollowedArtistsDriver,
     private val spotifyGetArtistAlbumsDriver: SpotifyGetArtistAlbumsDriver
 ) {
+
+    suspend fun getWatchListFlow(authCode: String): Flow<WatchListFlow> = flow {
+        emit(WatchListFlow.Status("Fetching all followed artists"))
+        val followedArtists = spotifyGetFollowedArtistsDriver.getAllFollowedArtists(authCode)
+        emit(WatchListFlow.Status("Fetching all artist albums"))
+        val albums =
+            spotifyGetArtistAlbumsDriver.getAlbumsForArtists(authCode, followedArtists.map { it.id })
+        emit(WatchListFlow.Status("Shuffling and sorting"))
+
+        val sortedAlbums = albums.sortedByDescending { album ->
+            parseReleaseDate(album.releaseDate)
+        }
+
+        emit(WatchListFlow.Result(sortedAlbums))
+    }
+
 
     suspend fun getWatchList(authCode: String): List<Album> {
         val followedArtists = spotifyGetFollowedArtistsDriver.getAllFollowedArtists(authCode)
