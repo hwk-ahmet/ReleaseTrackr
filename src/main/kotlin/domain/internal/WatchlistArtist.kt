@@ -1,7 +1,10 @@
 package org.releasetrackr.domain.internal
 
-data class Artist(
+import java.time.Instant
+
+data class WatchlistArtist(
     val id: String,
     val name: String,
+    val dateAdded: Instant,
     val imageUrl: String = ""
 )

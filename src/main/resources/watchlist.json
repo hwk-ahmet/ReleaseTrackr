@@ -1,0 +1,54 @@
+{
+  "artists": [
+    {
+      "id": "1xU878Z10B0UKRvSfS6E9j",
+      "name": "Bill Burr",
+      "dateAdded": "2025-08-21T00:00:00Z"
+    },
+    {
+      "id": "1gR39SsW7cQXQJ8hKqV9z1",
+      "name": "John Mulaney",
+      "dateAdded": "2025-08-21T00:00:00Z"
+    },
+    {
+      "id": "2kCcBybjl3SAtIcwdWpUeD",
+      "name": "Dave Chappelle",
+      "dateAdded": "2025-08-21T00:00:00Z"
+    },
+    {
+      "id": "4xRYI6VqpWRAQTI8zY0fzH",
+      "name": "Ricky Gervais",
+      "dateAdded": "2025-08-21T00:00:00Z"
+    },
+    {
+      "id": "3qiHUAX7zY4Qnjx8TNUzVx",
+      "name": "Mitch Hedberg",
+      "dateAdded": "2025-08-21T00:00:00Z"
+    },
+    {
+      "id": "5ZsFI1h6hIdQRw2ti0hz81",
+      "name": "Zach Galifianakis",
+      "dateAdded": "2025-08-21T00:00:00Z"
+    },
+    {
+      "id": "2P5sC9cVZDToPxyomzF1UH",
+      "name": "Bo Burnham",
+      "dateAdded": "2025-08-21T00:00:00Z"
+    },
+    {
+      "id": "0Y5tJX1MQlPlqiwlOH1tJY",
+      "name": "Travis Scott",
+      "dateAdded": "2025-08-21T00:00:00Z"
+    },
+    {
+      "id": "6nXSnNEdLuKTzAQozRtqiI",
+      "name": "Louis C.K.",
+      "dateAdded": "2025-08-21T00:00:00Z"
+    },
+    {
+      "id": "3V79CTgRnsDdJSTqW4vX6D",
+      "name": "George Carlin",
+      "dateAdded": "2025-08-21T00:00:00Z"
+    }
+  ]
+}

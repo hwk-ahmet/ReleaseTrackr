@@ -4,24 +4,28 @@ import WatchListFlow
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import org.releasetrackr.domain.internal.Album
+import org.releasetrackr.domain.internal.Artist
+import org.releasetrackr.driver.SpotifyClientCredentialsDriver
 import org.releasetrackr.driver.SpotifyGetArtistAlbumsDriver
-import org.releasetrackr.driver.SpotifyGetFollowedArtistsDriver
+import org.releasetrackr.repository.WatchlistRepository
 import org.springframework.stereotype.Service
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 @Service
 class WatchListService(
-    private val spotifyGetFollowedArtistsDriver: SpotifyGetFollowedArtistsDriver,
+    private val watchlistRepository: WatchlistRepository,
+    private val spotifyClientCredentialsDriver: SpotifyClientCredentialsDriver,
     private val spotifyGetArtistAlbumsDriver: SpotifyGetArtistAlbumsDriver
 ) {
 
-    suspend fun getWatchListFlow(authCode: String): Flow<WatchListFlow> = flow {
-        emit(WatchListFlow.Status("Fetching all followed artists"))
-        val followedArtists = spotifyGetFollowedArtistsDriver.getAllFollowedArtists(authCode)
+    suspend fun getWatchListFlow(): Flow<WatchListFlow> = flow {
+        emit(WatchListFlow.Status("Fetching artists from watchlist"))
+        val watchlistArtists = watchlistRepository.findAll()
         emit(WatchListFlow.Status("Fetching all artist albums"))
+        val accessToken = spotifyClientCredentialsDriver.getAccessToken()
         val albums =
-            spotifyGetArtistAlbumsDriver.getAlbumsForArtists(authCode, followedArtists.map { it.id })
+            spotifyGetArtistAlbumsDriver.getAlbumsForArtists(accessToken, watchlistArtists.map { it.id })
         emit(WatchListFlow.Status("Shuffling and sorting"))
 
         val sortedAlbums = albums.sortedByDescending { album ->
@@ -32,9 +36,10 @@ class WatchListService(
     }
 
 
-    suspend fun getWatchList(authCode: String): List<Album> {
-        val followedArtists = spotifyGetFollowedArtistsDriver.getAllFollowedArtists(authCode)
-        val albums = spotifyGetArtistAlbumsDriver.getAlbumsForArtists(authCode, followedArtists.map { it.id })
+    suspend fun getWatchList(): List<Album> {
+        val watchlistArtists = watchlistRepository.findAll()
+        val accessToken = spotifyClientCredentialsDriver.getAccessToken()
+        val albums = spotifyGetArtistAlbumsDriver.getAlbumsForArtists(accessToken, watchlistArtists.map { it.id })
 
         val sortedAlbums = albums.sortedByDescending { album ->
             parseReleaseDate(album.releaseDate)
