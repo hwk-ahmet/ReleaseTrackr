@@ -2,6 +2,7 @@
   "name": "release-trackr-fe",
   "version": "0.1.0",
   "private": true,
+  "proxy": "http://localhost:8080",
   "dependencies": {
     "@fontsource/press-start-2p": "^5.2.6",
     "@testing-library/dom": "^10.4.0",

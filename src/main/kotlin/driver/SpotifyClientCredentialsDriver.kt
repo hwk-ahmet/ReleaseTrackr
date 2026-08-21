@@ -45,5 +45,3 @@ data class SpotifyClientCredentialsResponse(
     val token_type: String,
     val expires_in: Int
 )
-
-private companion object : KLogging()

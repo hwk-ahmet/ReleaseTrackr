@@ -10,7 +10,13 @@ function App() {
     fetch('/api/albums')
       .then(response => {
         if (!response.ok) {
-          throw new Error('Failed to fetch albums');
+          if (response.status === 404) {
+            throw new Error('Albums endpoint not found. Is the backend running?');
+          }
+          if (response.status === 500) {
+            throw new Error('Server error. Check backend logs.');
+          }
+          throw new Error(`Failed to fetch albums (${response.status})`);
         }
         return response.json();
       })
@@ -19,7 +25,11 @@ function App() {
         setLoading(false);
       })
       .catch(err => {
-        setError(err.message);
+        if (err.message.includes('Failed to fetch')) {
+          setError('Cannot connect to backend. Make sure Spring Boot is running on port 8080.');
+        } else {
+          setError(err.message);
+        }
         setLoading(false);
       });
   }, []);
