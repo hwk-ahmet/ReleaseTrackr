@@ -38,3 +38,16 @@ Track comedy releases from a local watchlist of Spotify artist IDs.
 
 - Spotify genres are treated as a practical heuristic.
 - This architecture is intentionally ad-hoc and simple for fast iteration.
+
+## Explore Roadmap (Draft)
+
+- Near-term plan:
+  - rename `Top 100` UX mode to `Explore`
+  - paginate existing top list in small pages (6 per page)
+  - keep page logic stable while source size changes (100 -> 200 -> more)
+- Source expansion plan (not implemented yet):
+  - Spotify has no global "top comedians" endpoint
+  - build larger pool by running multiple Spotify artist search queries
+  - paginate each query with `limit` + `offset`, then merge + dedupe
+  - apply comedy heuristics and rank by followers/popularity
+- This section is planning-only and intentionally not finalized.
