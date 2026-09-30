@@ -82,12 +82,12 @@ html, body, #root {
 
 .modal-panel {
   width: 100%;
-  max-width: 660px;
-  height: 85vh;
+  max-width: 920px;
+  height: min(88vh, 760px);
   align-items: stretch;
-  gap: 12px;
+  gap: 14px;
   overflow: hidden;
-  padding: 14px;
+  padding: 16px;
   box-sizing: border-box;
 }
 
@@ -95,17 +95,60 @@ html, body, #root {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
+}
+
+.modal-close-btn {
+  min-width: 40px;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  line-height: 1;
+  font-size: 20px;
+  color: #d9d9d9;
+  background-color: #232a33;
+  border-color: #cfcfcf;
+}
+
+.modal-close-btn:hover {
+  background-color: #2b3440;
+  color: #f3f3f3;
 }
 
 .mode-switch-row {
   width: 100%;
   display: flex;
-  gap: 10px;
+  gap: 8px;
+}
+
+.mode-switch-row .nes-btn {
+  flex: 1;
+}
+
+.modal-body {
+  width: 100%;
+  min-height: 0;
+  flex: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 14px;
+}
+
+.source-section,
+.selected-section {
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  background: rgba(0, 0, 0, 0.26);
+  border-radius: 0;
+  padding: 10px;
+  clip-path: polygon(0 4px, 4px 4px, 4px 0, calc(100% - 4px) 0, calc(100% - 4px) 4px, 100% 4px, 100% calc(100% - 4px), calc(100% - 4px) calc(100% - 4px), calc(100% - 0px) calc(100% - 0px), 4px calc(100% - 0px), 4px calc(100% - 4px), 0 calc(100% - 4px));
 }
 
 .selected-label {
-  margin: 0 0 8px;
+  margin: 0 0 7px;
+  letter-spacing: 0.02em;
 }
 
 .watchlist-list {
@@ -113,22 +156,24 @@ html, body, #root {
   padding: 0;
   margin: 0;
   display: grid;
-  gap: 8px;
+  gap: 6px;
   height: 100%;
   overflow-y: auto;
   overflow-x: hidden;
-  padding-right: 6px;
+  padding-right: 3px;
 }
 
 .watchlist-item {
   border: none;
-  padding: 8px 10px;
-  border-radius: 6px;
+  padding: 2px 8px;
+  border-radius: 0;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
-  background: rgba(255, 255, 255, 0.03);
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.04);
+  min-height: 68px;
+  clip-path: polygon(0 3px, 3px 3px, 3px 0, calc(100% - 3px) 0, calc(100% - 3px) 3px, 100% 3px, 100% calc(100% - 3px), calc(100% - 3px) calc(100% - 3px), calc(100% - 0px) calc(100% - 0px), 3px calc(100% - 0px), 3px calc(100% - 3px), 0 calc(100% - 3px));
 }
 
 .search-results {
@@ -138,7 +183,7 @@ html, body, #root {
   padding: 0;
   box-sizing: border-box;
   background: rgba(0, 0, 0, 0.22);
-  height: 100%;
+  flex: 1;
   overflow-x: hidden;
   overflow-y: hidden;
   display: flex;
@@ -151,26 +196,28 @@ html, body, #root {
   padding: 0;
   margin: 0;
   display: grid;
-  gap: 8px;
+  gap: 6px;
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
-  padding-right: 6px;
+  padding-right: 3px;
   min-height: 0;
 }
 
 .search-item {
   border: none;
-  border-radius: 8px;
-  padding: 7px 9px;
+  border-radius: 0;
+  padding: 4px 8px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 14px;
-  background: rgba(255, 255, 255, 0.03);
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.04);
   transition: background 0.15s ease;
   min-width: 0;
   box-shadow: inset 0 -1px 0 rgba(255, 255, 255, 0.2);
+  min-height: 62px;
+  clip-path: polygon(0 3px, 3px 3px, 3px 0, calc(100% - 3px) 0, calc(100% - 3px) 3px, 100% 3px, 100% calc(100% - 3px), calc(100% - 3px) calc(100% - 3px), calc(100% - 0px) calc(100% - 0px), 3px calc(100% - 0px), 3px calc(100% - 3px), 0 calc(100% - 3px));
 }
 
 .search-item:hover {
@@ -180,7 +227,7 @@ html, body, #root {
 .search-artist-info {
   display: flex;
   align-items: center;
-  gap: 9px;
+  gap: 8px;
   min-width: 0;
 }
 
@@ -188,14 +235,18 @@ html, body, #root {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 370px;
+  max-width: 100%;
+  font-size: 0.8rem;
+  font-weight: 400;
+  line-height: 1.35;
+  color: #e8e8e8;
 }
 
 .search-artist-image {
-  width: 58px;
-  height: 58px;
+  width: 54px;
+  height: 54px;
   object-fit: cover;
-  border-radius: 8px;
+  border-radius: 0;
   border: 2px solid #fff;
   flex-shrink: 0;
 }
@@ -207,7 +258,7 @@ html, body, #root {
 .watchlist-artist-info {
   display: flex;
   align-items: center;
-  gap: 9px;
+  gap: 8px;
   min-width: 0;
 }
 
@@ -215,16 +266,45 @@ html, body, #root {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 380px;
+  max-width: 100%;
+  font-size: 0.8rem;
+  font-weight: 400;
+  line-height: 1.35;
+  color: #e8e8e8;
 }
 
 .watchlist-artist-image {
-  width: 52px;
-  height: 52px;
+  width: 64px;
+  height: 64px;
   object-fit: cover;
-  border-radius: 8px;
+  border-radius: 0;
   border: 2px solid #fff;
   flex-shrink: 0;
+}
+
+.remove-icon-btn {
+  width: 34px;
+  min-width: 34px;
+  height: 34px;
+  border: 2px solid #cfcfcf;
+  background: #232a33;
+  color: #ff7b7b;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1;
+  padding: 0;
+  cursor: pointer;
+  border-radius: 0;
+}
+
+.remove-icon-btn:hover {
+  background: #2b3440;
+  color: #ff9a9a;
+}
+
+.remove-icon-btn:focus-visible {
+  outline: 3px solid #ffffff;
+  outline-offset: 2px;
 }
 
 .watchlist-artist-placeholder {
@@ -234,8 +314,9 @@ html, body, #root {
 .search-input-row {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   width: 100%;
+  margin-bottom: 8px;
 }
 
 .search-input-row .nes-input {
@@ -249,6 +330,42 @@ html, body, #root {
   padding: 0;
 }
 
+.search-results-empty {
+  flex: 1;
+}
+
+.search-list,
+.watchlist-list {
+  scrollbar-width: thin;
+  scrollbar-color: #f5f5f5 #111822;
+}
+
+.search-list::-webkit-scrollbar,
+.watchlist-list::-webkit-scrollbar {
+  width: 12px;
+}
+
+.search-list::-webkit-scrollbar-track,
+.watchlist-list::-webkit-scrollbar-track {
+  background: #111822;
+  border: 2px solid #ffffff;
+}
+
+.search-list::-webkit-scrollbar-thumb,
+.watchlist-list::-webkit-scrollbar-thumb {
+  background: #f5f5f5;
+  border: 2px solid #111822;
+}
+
+.search-list::-webkit-scrollbar-thumb:hover,
+.watchlist-list::-webkit-scrollbar-thumb:hover {
+  background: #e0e0e0;
+}
+
+.helper-copy {
+  opacity: 0.9;
+}
+
 .section-divider {
   width: 100%;
   height: 0;
@@ -258,25 +375,16 @@ html, body, #root {
 
 .search-results-shell {
   width: 100%;
-  min-height: 300px;
-  max-height: 300px;
+  min-height: 0;
+  flex: 1;
   overflow: hidden;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
 }
 
-.search-area {
-  width: 100%;
-}
-
 .selected-section {
-  width: 100%;
-  min-height: 0;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  margin-top: 4px;
+  width: auto;
 }
 
 .selected-section .selected-label {
@@ -290,4 +398,72 @@ html, body, #root {
 
 .spotify-image {
   height: 10%;
+}
+
+@media (max-width: 920px) {
+  .modal-panel {
+    height: min(92vh, 900px);
+  }
+
+  .modal-body {
+    grid-template-columns: 1fr;
+    grid-template-rows: minmax(0, 1fr) minmax(0, 1fr);
+  }
+
+  .source-section,
+  .selected-section {
+    padding: 9px;
+  }
+}
+
+@media (max-width: 640px) {
+  .modal-backdrop {
+    padding: 8px;
+  }
+
+  .modal-panel {
+    padding: 10px;
+    gap: 10px;
+    height: 95vh;
+  }
+
+  .modal-header {
+    align-items: flex-start;
+  }
+
+  .modal-close-btn {
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
+  }
+
+  .search-item,
+  .watchlist-item {
+    min-height: 56px;
+  }
+
+  .search-item .nes-btn,
+  .watchlist-item .nes-btn,
+  .remove-icon-btn {
+    min-width: 76px;
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+
+  .remove-icon-btn {
+    min-width: 32px;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+  }
+
+  .search-artist-image {
+    width: 48px;
+    height: 48px;
+  }
+
+  .watchlist-artist-image {
+    width: 56px;
+    height: 56px;
+  }
 }

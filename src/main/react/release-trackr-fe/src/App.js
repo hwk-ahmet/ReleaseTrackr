@@ -1,6 +1,26 @@
 import React, { useEffect, useRef, useState } from 'react';
 import './App.css';
 
+const toList = (value) => {
+  if (Array.isArray(value)) {
+    return value;
+  }
+
+  if (value && typeof value === 'object') {
+    if (Array.isArray(value.items)) {
+      return value.items;
+    }
+    if (Array.isArray(value.results)) {
+      return value.results;
+    }
+    if (Array.isArray(value.artists)) {
+      return value.artists;
+    }
+  }
+
+  return [];
+};
+
 function App() {
   const [albums, setAlbums] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -66,7 +86,7 @@ function App() {
         return response.json();
       })
       .then(data => {
-        setWatchlist(data);
+        setWatchlist(toList(data));
         setWatchlistLoading(false);
       })
       .catch(() => {
@@ -91,7 +111,7 @@ function App() {
         return response.json();
       })
       .then((data) => {
-        setTopComedians(data);
+        setTopComedians(toList(data));
         setTopLoading(false);
       })
       .catch(() => {
@@ -164,7 +184,7 @@ function App() {
       return;
     }
 
-    if (searchValue.trim().length < 2) {
+    if (searchValue.trim().length < 3) {
       setSearchResults([]);
       setSearchError(null);
       setHasSearched(false);
@@ -183,7 +203,7 @@ function App() {
           return response.json();
         })
         .then((data) => {
-          setSearchResults(data);
+          setSearchResults(toList(data));
           setHasSearched(true);
           setSearchLoading(false);
         })
@@ -198,7 +218,12 @@ function App() {
   }, [searchValue, watchlistModalOpen]);
 
   const isSelected = (spotifyArtistId) => watchlist.some((item) => item.id === spotifyArtistId);
-  const mergedSearchResults = searchResults;
+  const mergedSearchResults = toList(searchResults);
+  const inSearchMode = watchlistMode === 'search';
+  const sourceItems = inSearchMode ? mergedSearchResults : topComedians;
+  const sourceLoading = inSearchMode ? searchLoading : topLoading;
+  const sourceError = inSearchMode ? searchError : topError;
+  const canShowSourceResults = inSearchMode ? searchValue.trim().length >= 3 && hasSearched : true;
 
   return (
     <div className="app-wrapper">
@@ -266,10 +291,11 @@ function App() {
                 <h3 className="nes-text is-primary">Update Watchlist</h3>
                 <button
                   type="button"
-                  className="nes-btn is-error"
+                  className="nes-btn modal-close-btn"
+                  aria-label="Close watchlist modal"
                   onClick={() => setWatchlistModalOpen(false)}
                 >
-                  Close
+                  ×
                 </button>
               </div>
 
@@ -290,148 +316,114 @@ function App() {
                 </button>
               </div>
 
-              {watchlistMode === 'search' && (
-                <div className="search-area">
-                  <div className="search-input-row">
-                    <input
-                      ref={searchInputRef}
-                      type="text"
-                      className="nes-input"
-                      placeholder="Search comedians"
-                      value={searchValue}
-                      onChange={(event) => setSearchValue(event.target.value)}
-                    />
-                    {searchValue && (
-                      <button
-                        type="button"
-                        className="search-clear-btn nes-btn is-error"
-                        onClick={() => {
-                          setSearchValue('');
-                          setSearchResults([]);
-                          setSearchError(null);
-                          setHasSearched(false);
-                        }}
-                        aria-label="Clear search"
-                      >
-                        x
-                      </button>
-                    )}
-                  </div>
-
-                  {searchValue.trim().length >= 2 && (
-                    <div className="search-results-shell">
-                      {searchLoading && <p className="nes-text">Searching...</p>}
-
-                      {searchError && <p className="nes-text is-error">{searchError}</p>}
-
-                      {!searchLoading && !searchError && hasSearched && (
-                        <div className="search-results">
-                          {mergedSearchResults.length === 0 ? (
-                            <p className="nes-text">No artists found.</p>
-                          ) : (
-                            <ul className="search-list">
-                              {mergedSearchResults.map((artist) => (
-                                <li key={artist.spotifyArtistId} className="search-item">
-                                  <div className="search-artist-info">
-                                    {artist.imageUrl ? (
-                                      <img src={artist.imageUrl} alt={artist.name} className="search-artist-image" />
-                                    ) : (
-                                      <div className="search-artist-image search-artist-placeholder" />
-                                    )}
-                                    <span>{artist.name}</span>
-                                  </div>
-                                  {isSelected(artist.spotifyArtistId) ? (
-                                    <span className="nes-text is-success">Selected</span>
-                                  ) : (
-                                    <button
-                                      type="button"
-                                      className="nes-btn is-success"
-                                      onClick={() => addComedianToWatchlist(artist)}
-                                    >
-                                      Select
-                                    </button>
-                                  )}
-                                </li>
-                              ))}
-                            </ul>
-                          )}
-                        </div>
+              <div className="modal-body">
+                <div className="source-section">
+                  {inSearchMode && (
+                    <div className="search-input-row">
+                      <input
+                        ref={searchInputRef}
+                        type="text"
+                        className="nes-input"
+                        placeholder="Search comedians"
+                        value={searchValue}
+                        onChange={(event) => setSearchValue(event.target.value)}
+                      />
+                      {searchValue && (
+                        <button
+                          type="button"
+                          className="search-clear-btn nes-btn is-error"
+                          onClick={() => {
+                            setSearchValue('');
+                            setSearchResults([]);
+                            setSearchError(null);
+                            setHasSearched(false);
+                          }}
+                          aria-label="Clear search"
+                        >
+                          x
+                        </button>
                       )}
                     </div>
                   )}
-                </div>
-              )}
 
-              {watchlistMode === 'top' && (
-                <div className="search-area">
                   <div className="search-results-shell">
-                    {topLoading && <p className="nes-text">Loading top comedians...</p>}
-                    {topError && <p className="nes-text is-error">{topError}</p>}
-                    {!topLoading && !topError && topComedians.length > 0 && (
+                    {inSearchMode && searchValue.trim().length < 3 && <div className="search-results-empty" />}
+
+                    {sourceLoading && (
+                      <p className="nes-text">{inSearchMode ? 'Searching...' : 'Loading top comedians...'}</p>
+                    )}
+                    {sourceError && <p className="nes-text is-error">{sourceError}</p>}
+
+                    {!sourceLoading && !sourceError && canShowSourceResults && (
                       <div className="search-results">
-                        <ul className="search-list">
-                          {topComedians.map((artist) => (
-                            <li key={artist.spotifyArtistId} className="search-item">
-                              <div className="search-artist-info">
-                                {artist.imageUrl ? (
-                                  <img src={artist.imageUrl} alt={artist.name} className="search-artist-image" />
+                        {sourceItems.length === 0 ? (
+                          <p className="nes-text">No artists found.</p>
+                        ) : (
+                          <ul className="search-list">
+                            {sourceItems.map((artist) => (
+                              <li key={artist.spotifyArtistId} className="search-item">
+                                <div className="search-artist-info">
+                                  {artist.imageUrl ? (
+                                    <img src={artist.imageUrl} alt={artist.name} className="search-artist-image" />
+                                  ) : (
+                                    <div className="search-artist-image search-artist-placeholder" />
+                                  )}
+                                  <span>{artist.name}</span>
+                                </div>
+                                {isSelected(artist.spotifyArtistId) ? (
+                                  <span className="nes-text is-success">Selected</span>
                                 ) : (
-                                  <div className="search-artist-image search-artist-placeholder" />
+                                  <button
+                                    type="button"
+                                    className="nes-btn is-success"
+                                    onClick={() => addComedianToWatchlist(artist)}
+                                  >
+                                    Select
+                                  </button>
                                 )}
-                                <span>{artist.name}</span>
-                              </div>
-                              {isSelected(artist.spotifyArtistId) ? (
-                                <span className="nes-text is-success">Selected</span>
-                              ) : (
-                                <button
-                                  type="button"
-                                  className="nes-btn is-success"
-                                  onClick={() => addComedianToWatchlist(artist)}
-                                >
-                                  Select
-                                </button>
-                              )}
-                            </li>
-                          ))}
-                        </ul>
+                              </li>
+                            ))}
+                          </ul>
+                        )}
                       </div>
                     )}
                   </div>
                 </div>
-              )}
 
-              <div className="selected-section">
-                <p className="nes-text selected-label">Currently selected: ({watchlist.length})</p>
+                <div className="selected-section">
+                  <p className="nes-text selected-label">Selected ({watchlist.length})</p>
 
-                {watchlistLoading && <p className="nes-text">Loading watchlist...</p>}
-                {watchlistError && <p className="nes-text is-error">{watchlistError}</p>}
-                {!watchlistLoading && !watchlistError && watchlist.length === 0 && (
-                  <p className="nes-text">No selected comedians yet.</p>
-                )}
+                  {watchlistLoading && <p className="nes-text">Loading watchlist...</p>}
+                  {watchlistError && <p className="nes-text is-error">{watchlistError}</p>}
+                  {!watchlistLoading && !watchlistError && watchlist.length === 0 && (
+                    <p className="nes-text helper-copy">No selected comedians yet.</p>
+                  )}
 
-                {!watchlistLoading && !watchlistError && watchlist.length > 0 && (
-                  <ul className="watchlist-list">
-                    {watchlist.map((comedian) => (
-                      <li key={comedian.id} className="watchlist-item">
-                        <div className="watchlist-artist-info">
-                          {comedian.imageUrl ? (
-                            <img src={comedian.imageUrl} alt={comedian.name} className="watchlist-artist-image" />
-                          ) : (
-                            <div className="watchlist-artist-image watchlist-artist-placeholder" />
-                          )}
-                          <span>{comedian.name}</span>
-                        </div>
-                        <button
-                          type="button"
-                          className="nes-btn is-error"
-                          onClick={() => deselectComedian(comedian.id)}
-                        >
-                          X
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                )}
+                  {!watchlistLoading && !watchlistError && watchlist.length > 0 && (
+                    <ul className="watchlist-list">
+                      {watchlist.map((comedian) => (
+                        <li key={comedian.id} className="watchlist-item">
+                          <div className="watchlist-artist-info">
+                            {comedian.imageUrl ? (
+                              <img src={comedian.imageUrl} alt={comedian.name} className="watchlist-artist-image" />
+                            ) : (
+                              <div className="watchlist-artist-image watchlist-artist-placeholder" />
+                            )}
+                            <span>{comedian.name}</span>
+                          </div>
+                          <button
+                            type="button"
+                            className="remove-icon-btn"
+                            aria-label={`Remove ${comedian.name} from watchlist`}
+                            onClick={() => deselectComedian(comedian.id)}
+                          >
+                            ×
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
               </div>
             </div>
           </div>
