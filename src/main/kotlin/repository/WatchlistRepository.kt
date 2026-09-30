@@ -21,7 +21,8 @@ class WatchlistRepository {
     data class WatchlistArtistData(
         val id: String,
         val name: String,
-        val dateAdded: String
+        val dateAdded: String,
+        val imageUrl: String? = null
     )
 
     fun findAll(): List<WatchlistArtist> {
@@ -70,7 +71,8 @@ class WatchlistRepository {
         return WatchlistArtist(
             id = id,
             name = name,
-            dateAdded = Instant.parse(dateAdded)
+            dateAdded = Instant.parse(dateAdded),
+            imageUrl = imageUrl.orEmpty()
         )
     }
 
@@ -78,7 +80,8 @@ class WatchlistRepository {
         return WatchlistArtistData(
             id = id,
             name = name,
-            dateAdded = dateAdded.toString()
+            dateAdded = dateAdded.toString(),
+            imageUrl = imageUrl
         )
     }
 }
